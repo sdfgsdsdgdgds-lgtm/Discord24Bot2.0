@@ -33,6 +33,7 @@ ANTI_RAID_TIME_WINDOW = 60
 ANTI_RAID_THRESHOLD = 5
 HOURLY_MESSAGE_CHANNEL_NAME = "general-💬"
 HOURLY_MESSAGE = "SKICKA IN I exposé-📸"
+HOURLY_MESSAGE_INTERVAL_HOURS = 2  # Ändra här för att skicka meddelande varje X timmar
 
 # ===== ANTI-RAID =====
 join_times = defaultdict(list)
@@ -95,7 +96,7 @@ async def on_member_join(member):
         print(f'⚠️ Raid upptäckt! Alla textkanaler låsta.')
 
 # ===== TIMMEDDELANDEN =====
-@tasks.loop(hours=1)
+@tasks.loop(hours=HOURLY_MESSAGE_INTERVAL_HOURS)
 async def hourly_message():
     for guild in bot.guilds:
         channel = discord.utils.get(guild.text_channels, name=HOURLY_MESSAGE_CHANNEL_NAME)
@@ -236,5 +237,7 @@ if __name__ == "__main__":
     else:
         print("🚀 Startar Discord bot...")
         bot.run(TOKEN)
+
+
 
 
