@@ -1,4 +1,4 @@
-# ExposeBot
+# Bot
 
 Discord Bot med auto-roll, anti-raid (lockdown), timmeddelanden och slash-kommandon. 
 Optimerad för 24/7-drift på Render med UptimeRobot.
@@ -8,3 +8,4 @@ Optimerad för 24/7-drift på Render med UptimeRobot.
 - Anti-raid: Varning + automatiskt lås av alla textkanaler
 - Timmeddelanden: Skickar automatiskt meddelande varje timme
 - Slash-kommandon: /hej, /ping, /dice, /coinflip, /joke
+
