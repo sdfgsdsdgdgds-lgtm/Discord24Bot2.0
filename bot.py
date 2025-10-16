@@ -227,6 +227,17 @@ async def uptime(interaction: discord.Interaction):
     minutes, seconds = divmod(remainder, 60)
     await interaction.response.send_message(f"⏱️ Boten har varit igång i **{hours}h {minutes}m {seconds}s**.")
 
+# ===== NYTT: HELP-KOMMANDO =====
+@bot.tree.command(name="help", description="Visar alla tillgängliga kommandon och vad boten kan göra")
+async def help_command(interaction: discord.Interaction):
+    embed = discord.Embed(title="🤖 Hjälp - Lista över kommandon", color=discord.Color.blue())
+    embed.set_footer(text="Bot utvecklad av dig | Använd / före kommandon")
+
+    for command in bot.tree.walk_commands():
+        embed.add_field(name=f"/{command.name}", value=command.description or "Ingen beskrivning", inline=False)
+
+    await interaction.response.send_message(embed=embed, ephemeral=True)
+
 # ===== STARTTID =====
 bot.start_time = datetime.now()
 
@@ -237,7 +248,3 @@ if __name__ == "__main__":
     else:
         print("🚀 Startar Discord bot...")
         bot.run(TOKEN)
-
-
-
-
