@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Discord Bot med auto-roll, anti-raid (lockdown), timmeddelanden och slash-kommandon
+Discord Bot med auto-roll, anti-raid (lockdown), slash-kommandon och möjlighet att skicka meddelanden via boten
 Optimerad för 24/7-drift på Render med UptimeRobot
 """
 
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord import app_commands
 import os
 import random
@@ -31,9 +31,6 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 AUTO_ROLE_NAME = "Member"
 ANTI_RAID_TIME_WINDOW = 60
 ANTI_RAID_THRESHOLD = 5
-HOURLY_MESSAGE_CHANNEL_NAME = "general-💬"
-HOURLY_MESSAGE = "SKICKA IN I exposé-📸"
-HOURLY_MESSAGE_INTERVAL_HOURS = 2  # Ändra här för att skicka meddelande varje X timmar
 
 # ===== ANTI-RAID =====
 join_times = defaultdict(list)
@@ -52,11 +49,6 @@ async def on_ready():
         print(f'✅ Synkroniserade {len(synced)} slash-kommandon')
     except Exception as e:
         print(f'❌ Fel vid synkronisering: {e}')
-
-    # Om du vill ta bort timmeddelanden, kommentera bort denna block
-    if not hourly_message.is_running():
-        hourly_message.start()
-        print('✅ Timmeddelanden startade')
 
 @bot.event
 async def on_member_join(member):
@@ -96,22 +88,6 @@ async def on_member_join(member):
         
         print(f'⚠️ Raid upptäckt! Alla textkanaler låsta.')
 
-# ===== TIMMEDDELANDEN =====
-@tasks.loop(hours=HOURLY_MESSAGE_INTERVAL_HOURS)
-async def hourly_message():
-    for guild in bot.guilds:
-        channel = discord.utils.get(guild.text_channels, name=HOURLY_MESSAGE_CHANNEL_NAME)
-        if channel:
-            try:
-                await channel.send(HOURLY_MESSAGE)
-                print(f'✅ Skickade timmeddelande till #{channel.name} i {guild.name}')
-            except:
-                print(f'❌ Kunde inte skicka timmeddelande i #{channel.name}')
-
-@hourly_message.before_loop
-async def before_hourly_message():
-    await bot.wait_until_ready()
-
 # ===== SLASH-KOMMANDON =====
 @bot.tree.command(name="hej", description="Säger hej till dig!")
 async def hej(interaction: discord.Interaction):
@@ -143,15 +119,6 @@ async def joke(interaction: discord.Interaction):
         "Hur får man en vävare att skratta? Berätta en vävande historia! 🕷️"
     ]
     await interaction.response.send_message(f"😄 Skämt:\n{random.choice(jokes)}")
-
-# ===== NYTT KOMMANDO: SAY =====
-@bot.tree.command(name="say", description="Skicka ett meddelande via boten")
-@app_commands.describe(message="Meddelandet som ska skickas")
-@app_commands.checks.has_permissions(manage_messages=True)  # Ta bort denna rad om alla ska kunna använda kommandot
-async def say(interaction: discord.Interaction, message: str):
-    await interaction.response.defer()
-    await interaction.channel.send(message)
-    await interaction.followup.send("✅ Meddelandet skickades!", ephemeral=True)
 
 # ===== MODERERINGSKOMMANDON =====
 @bot.tree.command(name="kick", description="Sparkar en användare från servern")
@@ -248,6 +215,15 @@ async def help_command(interaction: discord.Interaction):
 
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
+# ===== NYTT: SKICKA MEDDELANDE VIA BOT =====
+@bot.tree.command(name="send", description="Skicka ett meddelande via boten i denna kanal")
+@app_commands.describe(message="Meddelandet du vill skicka")
+@app_commands.checks.has_permissions(manage_messages=True)
+async def send(interaction: discord.Interaction, message: str):
+    await interaction.response.defer()
+    await interaction.channel.send(message)
+    await interaction.followup.send(f"✅ Meddelande skickat!", ephemeral=True)
+
 # ===== STARTTID =====
 bot.start_time = datetime.now()
 
@@ -258,4 +234,5 @@ if __name__ == "__main__":
     else:
         print("🚀 Startar Discord bot...")
         bot.run(TOKEN)
+
 
