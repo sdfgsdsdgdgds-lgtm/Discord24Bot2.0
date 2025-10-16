@@ -53,6 +53,7 @@ async def on_ready():
     except Exception as e:
         print(f'❌ Fel vid synkronisering: {e}')
 
+    # Om du vill ta bort timmeddelanden, kommentera bort denna block
     if not hourly_message.is_running():
         hourly_message.start()
         print('✅ Timmeddelanden startade')
@@ -142,6 +143,15 @@ async def joke(interaction: discord.Interaction):
         "Hur får man en vävare att skratta? Berätta en vävande historia! 🕷️"
     ]
     await interaction.response.send_message(f"😄 Skämt:\n{random.choice(jokes)}")
+
+# ===== NYTT KOMMANDO: SAY =====
+@bot.tree.command(name="say", description="Skicka ett meddelande via boten")
+@app_commands.describe(message="Meddelandet som ska skickas")
+@app_commands.checks.has_permissions(manage_messages=True)  # Ta bort denna rad om alla ska kunna använda kommandot
+async def say(interaction: discord.Interaction, message: str):
+    await interaction.response.defer()
+    await interaction.channel.send(message)
+    await interaction.followup.send("✅ Meddelandet skickades!", ephemeral=True)
 
 # ===== MODERERINGSKOMMANDON =====
 @bot.tree.command(name="kick", description="Sparkar en användare från servern")
@@ -248,3 +258,4 @@ if __name__ == "__main__":
     else:
         print("🚀 Startar Discord bot...")
         bot.run(TOKEN)
+
