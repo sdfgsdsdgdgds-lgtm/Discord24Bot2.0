@@ -7,6 +7,7 @@ Optimerad för 24/7-drift på Render med UptimeRobot.
 - Auto-roll: Ger nya medlemmar rollen "Member"
 - Anti-raid: Varning + automatiskt lås av alla textkanaler
 - Timmeddelanden: Skickar automatiskt meddelande varje 2 timme
-- Slash-kommandon: /hej, /ping, /dice, /coinflip, /joke
+- Slash-kommandon: /hej, /ping, /dice, /coinflip, /joke            Har moderering-kommandon 
+
 
 
